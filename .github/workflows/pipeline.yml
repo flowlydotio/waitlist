@@ -390,7 +390,7 @@ jobs:
           echo "previous-commit=$PREVIOUS_COMMIT" >> $GITHUB_OUTPUT
           echo "📌 Stored previous main commit: $PREVIOUS_COMMIT"
 
-      - name: Sync develop to main (Fast-forward)
+      - name: Sync develop to main (Fast-forward preferred, fallback to merge)
         if: steps.verify-sync.outputs.should-sync == 'true'
         id: sync-merge
         run: |
@@ -401,11 +401,29 @@ jobs:
           # Get the previous commit hash (stored before merge)
           PREVIOUS_COMMIT="${{ steps.store-previous.outputs.previous-commit }}"
           
-          # Perform fast-forward merge (preserves all individual commits)
-          echo "🔍 Debug: About to fast-forward merge develop into main"
-          git merge --ff-only develop
+          # Try fast-forward merge first (preferred - preserves linear history)
+          echo "🔍 Debug: Attempting fast-forward merge..."
+          if git merge --ff-only develop; then
+            echo "✅ Fast-forward merge successful"
+            echo "merge-type=fast-forward" >> $GITHUB_OUTPUT
+          else
+            echo "⚠️ Fast-forward not possible (branches have diverged)"
+            echo "🔄 Falling back to regular merge..."
+            
+            # Perform regular merge (creates merge commit)
+            git merge --no-ff develop -m "chore: sync develop to main for production deployment
+
+          Synced commits from develop:
+          $(git log --oneline $PREVIOUS_COMMIT..origin/develop --reverse | sed 's/^/  - /')
           
-          echo "🔍 Debug: Fast-forward merge completed successfully"
+          Note: Regular merge used due to branch divergence. Consider syncing main back to develop to enable fast-forward merges.
+          
+          Triggered by: ${{ github.actor }}"
+            
+            echo "✅ Regular merge completed successfully"
+            echo "merge-type=regular" >> $GITHUB_OUTPUT
+          fi
+          
           echo "✅ Synced commits from develop:"
           git log --oneline $PREVIOUS_COMMIT..HEAD --reverse | sed 's/^/  - /'
           
@@ -604,21 +622,40 @@ jobs:
       - name: Check if sync was performed
         id: check_sync
         run: |
+          # Checkout main to check current state
+          git checkout main
+          git pull origin main
+          
           # Check if sync-to-production job ran and has output
           PREVIOUS_COMMIT="${{ needs.sync-to-production.outputs.previous-commit || '' }}"
           if [[ -n "$PREVIOUS_COMMIT" && "$PREVIOUS_COMMIT" != "" ]]; then
             echo "is_sync=true" >> $GITHUB_OUTPUT
             echo "previous-commit=$PREVIOUS_COMMIT" >> $GITHUB_OUTPUT
             echo "✅ Sync was performed, previous commit: $PREVIOUS_COMMIT"
+            
+            # Check if last commit is a merge commit (regular merge) or fast-forward
+            LAST_COMMIT_MSG=$(git log -1 --pretty=%B)
+            if [[ "$LAST_COMMIT_MSG" == *"sync develop to main for production deployment"* ]]; then
+              echo "merge-type=regular" >> $GITHUB_OUTPUT
+              echo "📌 Detected regular merge commit"
+            else
+              echo "merge-type=fast-forward" >> $GITHUB_OUTPUT
+              echo "📌 Detected fast-forward merge"
+            fi
           else
             echo "is_sync=false" >> $GITHUB_OUTPUT
             echo "ℹ️ No sync was performed (sync-to-production was skipped or had no output), skipping revert"
           fi
 
-      - name: Revert sync (fast-forward merge)
+      - name: Revert sync
         if: steps.check_sync.outputs.is_sync == 'true'
         run: |
+          # Ensure we're on main branch
+          git checkout main
+          git pull origin main
+          
           PREVIOUS_COMMIT="${{ steps.check_sync.outputs.previous-commit }}"
+          MERGE_TYPE="${{ steps.check_sync.outputs.merge-type }}"
           
           # Verify the commit exists
           if ! git cat-file -e $PREVIOUS_COMMIT^{commit} 2>/dev/null; then
@@ -626,13 +663,20 @@ jobs:
             exit 1
           fi
           
-          # Reset to previous commit (before the fast-forward merge)
-          git reset --hard $PREVIOUS_COMMIT
+          if [[ "$MERGE_TYPE" == "regular" ]]; then
+            # For regular merge, revert the merge commit
+            echo "🔄 Reverting regular merge commit..."
+            git reset --hard $PREVIOUS_COMMIT
+          else
+            # For fast-forward merge, reset to previous commit
+            echo "🔄 Reverting fast-forward merge..."
+            git reset --hard $PREVIOUS_COMMIT
+          fi
           
           # Force push to revert
           git push origin main --force
           
-          echo "🔄 Reverted fast-forward merge due to deployment failure"
+          echo "🔄 Reverted $MERGE_TYPE merge due to deployment failure"
           echo "Reverted to commit: $PREVIOUS_COMMIT"
 
       - name: Revert notification
