@@ -1,203 +1,158 @@
-# Flowly Waitlist
+# Flowly Monorepo
 
 <div align="center">
-  <img src="thumbnail.jpg" alt="Flowly Waitlist Preview" width="600" />
+  **A Turborepo monorepo for Flowly applications and packages.**
   
-  **AI Finance Mentor waitlist page with glassmorphism design, SEO optimization, and Loops email integration.**
-  
-  [![Live Demo](https://img.shields.io/badge/Live%20Demo-getflowly.io-blue?style=for-the-badge&logo=vercel)](https://getflowly.io)
-  [![Built with Vite](https://img.shields.io/badge/Built%20with-Vite-646CFF?style=for-the-badge&logo=vite)](https://vitejs.dev/)
-  [![React](https://img.shields.io/badge/React-19.1.1-61DAFB?style=for-the-badge&logo=react)](https://reactjs.org/)
-  [![TypeScript](https://img.shields.io/badge/TypeScript-5.9.3-3178C6?style=for-the-badge&logo=typescript)](https://www.typescriptlang.org/)
+  [![Built with Turborepo](https://img.shields.io/badge/Built%20with-Turborepo-EF4444?style=for-the-badge&logo=turborepo)](https://turbo.build/repo)
+  [![Package Manager](https://img.shields.io/badge/pnpm-10.20.0-F69220?style=for-the-badge&logo=pnpm)](https://pnpm.io/)
 </div>
 
 ## About / Overview
 
-Flowly is an AI-powered financial guidance platform that helps users understand, plan, and grow their money effortlessly. This waitlist page serves as the landing page for early access signups, featuring a modern glassmorphism design with video backgrounds and seamless email integration.
+Flowly is an AI-powered financial guidance platform. This monorepo contains all Flowly applications and shared packages, managed with Turborepo for optimal build performance and developer experience.
 
-The project is built with modern web technologies and optimized for performance, accessibility, and SEO. It includes a secure serverless API for handling waitlist subscriptions through Loops email service.
+The monorepo structure enables:
+- **Shared code** across multiple applications
+- **Faster builds** with intelligent caching via Turborepo
+- **Consistent tooling** and dependencies across projects
+- **Simplified development** workflow with unified scripts
 
 ## Tech Stack
 
-- **Frontend Framework**: React 19.1.1 with TypeScript
-- **Build Tool**: Vite with Rolldown
-- **Styling**: Tailwind CSS 4.1.14 with custom glassmorphism components
-- **UI Components**: Radix UI primitives with custom styling
-- **Email Service**: Loops API integration
-- **Deployment**: Vercel with serverless functions
-- **Package Manager**: pnpm
-- **Linting**: ESLint with TypeScript support
+- **Monorepo Tool**: Turborepo
+- **Package Manager**: pnpm (with workspaces)
+- **TypeScript**: Shared TypeScript configuration
+- **Build System**: Vite (for frontend applications)
 
 ## Setup / Installation
 
 ### Prerequisites
-- Node.js 18+ 
-- pnpm (recommended) or npm
-- Vercel account (for deployment)
+- Node.js 18+
+- pnpm 10.0.0+
 
 ### Local Development
 
 1. **Clone the repository**
    ```bash
-   git clone https://github.com/your-username/flowly-waitlist.git
-   cd flowly-waitlist
+   git clone https://github.com/your-username/flowly.git
+   cd flowly
    ```
 
 2. **Install dependencies**
    ```bash
    pnpm install
-   # or
-   npm install
    ```
 
-3. **Set up environment variables**
-   
-   Create a `.env.local` file in the root directory:
-   ```env
-   # App Configuration
-   VITE_APP_URL=https://getflowly.io
-   VITE_APP_NAME=Flowly
-   VITE_APP_DESCRIPTION=Meet your AI Finance Mentor. Get early access to Flowly's revolutionary AI-powered financial guidance platform.
-   ```
-
-4. **Start development server**
+3. **Start development servers**
    ```bash
+   # Run all apps in development mode
    pnpm dev
-   # or
-   npm run dev
-   ```
    
-   The app will be available at `http://localhost:5173`
-
-### Production Deployment
-
-1. **Set up Vercel environment variables**
-   
-   In your Vercel dashboard, add:
-   ```env
-   LOOPS_API_KEY=your_loops_api_key_here
+   # Or run a specific app
+   pnpm --filter waitlist dev
    ```
-
-2. **Deploy to Vercel**
-   ```bash
-   vercel --prod
-   ```
-
-## Usage
-
-### For Users
-1. Visit the waitlist page
-2. Enter your email address
-3. Click "Join Waitlist" to subscribe
-4. Receive confirmation and updates via email
-
-### For Developers
-
-**Available Scripts:**
-```bash
-pnpm dev          # Start development server
-pnpm build        # Build for production
-pnpm preview      # Preview production build
-pnpm lint         # Run ESLint
-pnpm lint:fix     # Fix ESLint issues
-pnpm type-check   # Run TypeScript type checking
-```
-
-**API Endpoints:**
-- `POST /api/join-waitlist` - Subscribe to waitlist
 
 ## Project Structure
 
 ```
-waitlist/
-├── api/                    # Serverless API functions
-│   └── join-waitlist.ts   # Waitlist subscription handler
-├── public/                 # Static assets
-│   ├── favicon.png
-│   ├── og-image.jpg
-│   ├── robots.txt
-│   └── sitemap.xml
-├── src/
-│   ├── assets/            # Video and media files
-│   ├── components/        # React components
-│   │   ├── ui/           # Reusable UI components
-│   │   ├── Buttons.tsx
-│   │   ├── Footer.tsx
-│   │   ├── Inputs.tsx
-│   │   └── Pill.tsx
-│   ├── config/           # Configuration files
-│   ├── lib/              # Utility libraries
-│   ├── services/         # API service layer
-│   ├── App.tsx           # Main application component
-│   └── main.tsx          # Application entry point
-├── thumbnail.jpg         # Project thumbnail
+flowly/
+├── apps/
+│   └── waitlist/          # Flowly waitlist landing page
+├── packages/              # Shared packages (future)
+├── package.json          # Root package.json with Turborepo
+├── turbo.json            # Turborepo configuration
+├── pnpm-workspace.yaml   # pnpm workspace configuration
 └── README.md
 ```
 
-## Features
+## Usage
 
-### ✨ Design & UX
-- **Glassmorphism Design**: Modern glass-like UI with backdrop blur effects
-- **Video Background**: Engaging financial concept video with overlay protection
-- **Responsive Design**: Optimized for all device sizes
-- **Accessibility**: WCAG compliant with proper ARIA labels and keyboard navigation
-- **Toast Notifications**: User feedback for form submissions
+### Available Scripts
 
-### 🔧 Technical Features
-- **TypeScript**: Full type safety throughout the application
-- **Modern React**: Uses React 19 with hooks and functional components
-- **Performance Optimized**: Fast loading with Vite and optimized assets
-- **SEO Ready**: Complete meta tags, structured data, and sitemap
-- **Error Handling**: Comprehensive error handling with user-friendly messages
+Run scripts from the root to execute across all workspaces:
 
-### 📧 Email Integration
-- **Loops Integration**: Secure serverless API for email management
-- **Duplicate Prevention**: Handles duplicate email subscriptions gracefully
-- **Source Tracking**: All contacts tagged with `source: "waitlist"`
-- **Validation**: Client and server-side email validation
+```bash
+# Development
+pnpm dev                  # Start all apps in dev mode
+pnpm build                # Build all apps
+pnpm build:staging        # Build all apps for staging
+pnpm build:production    # Build all apps for production
 
-### 🚀 SEO Features
-- **Meta Tags**: Open Graph and Twitter Cards support
-- **JSON-LD**: Structured data for search engines
-- **Sitemap**: XML sitemap for search engine indexing
-- **Robots.txt**: Search engine crawling instructions
-- **Canonical URLs**: Proper URL canonicalization
+# Code Quality
+pnpm lint                 # Lint all workspaces
+pnpm lint:fix            # Fix linting issues
+pnpm type-check          # Type check all workspaces
 
-## Environment Variables
-
-### Frontend (.env.local)
-```env
-# App Configuration
-VITE_APP_URL=https://getflowly.io
-VITE_APP_NAME=Flowly
-VITE_APP_DESCRIPTION=Meet your AI Finance Mentor...
+# Maintenance
+pnpm clean               # Clean all build artifacts
 ```
 
-### Vercel Environment Variables
-```env
-LOOPS_API_KEY=your_loops_api_key_here
+### Running Commands in Specific Workspaces
+
+Use pnpm's filter flag to run commands in specific workspaces:
+
+```bash
+# Run dev in waitlist app only
+pnpm --filter waitlist dev
+
+# Build waitlist app only
+pnpm --filter waitlist build
+
+# Run lint in waitlist app only
+pnpm --filter waitlist lint
 ```
 
-## Loops Integration
+## Applications
 
-This waitlist integrates with [Loops](https://loops.so/) for email management:
+### Waitlist (`apps/waitlist`)
 
-- **Secure API Key**: Loops API key stored server-side only
-- **Serverless Function**: `/api/join-waitlist` handles all Loops integration
-- **Automatic Contact Creation**: New emails added to Loops contact list
-- **Source Tracking**: All contacts tagged with `source: "waitlist"`
-- **Error Handling**: Comprehensive error handling with user-friendly messages
+The Flowly waitlist landing page with glassmorphism design, SEO optimization, and Loops email integration.
 
-### Setting up Loops
+- **Tech**: React 19, Vite, Tailwind CSS 4
+- **Live**: [https://getflowly.io](https://getflowly.io)
 
-1. Create a Loops account at [loops.so](https://loops.so/)
-2. Get your API key from the Loops dashboard
-3. Add the API key to your Vercel environment variables as `LOOPS_API_KEY`
-4. Deploy to Vercel - the integration will automatically handle contact creation
+See `apps/waitlist/README.md` for detailed documentation.
+
+## Packages
+
+Shared packages will be added to the `packages/` directory as the monorepo grows.
+
+## Deploy
+
+### Vercel Configuration
+
+Para o deploy no Vercel funcionar corretamente com o monorepo:
+
+1. **No Vercel Dashboard**, configure:
+   - **Root Directory**: `apps/waitlist`
+   - **Build Command**: `pnpm --filter waitlist build`
+   - **Install Command**: `pnpm install`
+   - **Output Directory**: `dist`
+
+2. O arquivo `apps/waitlist/vercel.json` já está configurado para monorepo.
+
+3. **Environment Variables**: Mantenha as mesmas variáveis que você já tinha configuradas.
+
+📖 **Guia completo**: Veja `docs/MONOREPO_MIGRATION.md` para instruções detalhadas.
 
 ## Contributing
 
 ### Git Workflow
+
+Use o script helper na raiz do monorepo:
+
+```bash
+# Criar nova feature branch
+./scripts/git-workflow.sh start feature-name
+
+# Finalizar feature e criar PR
+./scripts/git-workflow.sh finish
+
+# Ver status
+./scripts/git-workflow.sh status
+```
+
+**Ou manualmente:**
 1. Always work from feature branches
 2. Create feature branch from `develop`: `git checkout -b feature/your-feature-name`
 3. Make changes and commit frequently with clear messages
@@ -207,15 +162,21 @@ This waitlist integrates with [Loops](https://loops.so/) for email management:
 ### Code Standards
 - Follow TypeScript best practices
 - Use ESLint for code quality
-- Write small, focused components
+- Write small, focused modules
 - Add proper error handling
 - Include accessibility attributes
 - Test on multiple devices and browsers
+
+## Turborepo Features
+
+This monorepo leverages Turborepo for:
+
+- **Intelligent Caching**: Build outputs are cached and reused across runs
+- **Parallel Execution**: Tasks run in parallel when possible
+- **Task Dependencies**: Automatic dependency resolution between tasks
+- **Remote Caching**: (Optional) Share cache across team and CI/CD
 
 ## License
 
 This project is proprietary software. All rights reserved.
 
----
-
-**Live Demo**: [https://getflowly.io](https://getflowly.io)

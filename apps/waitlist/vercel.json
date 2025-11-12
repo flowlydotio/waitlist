@@ -1,8 +1,9 @@
 {
 	"version": 2,
-	"buildCommand": "pnpm build",
+	"buildCommand": "pnpm --filter waitlist build",
 	"installCommand": "pnpm install",
 	"outputDirectory": "dist",
+	"rootDirectory": "apps/waitlist",
 	"rewrites": [
 		{
 			"source": "/(.*)",

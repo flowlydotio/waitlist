@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Git Workflow Helper Script for Flowly Monorepo
+# Git Workflow Helper Script for Flowly Waitlist
 # Usage: ./scripts/git-workflow.sh <command> [options]
 
 set -e
@@ -14,7 +14,7 @@ NC='\033[0m' # No Color
 
 # Helper functions
 print_help() {
-    echo -e "${BLUE}Git Workflow Helper for Flowly Monorepo${NC}"
+    echo -e "${BLUE}Git Workflow Helper for Flowly Waitlist${NC}"
     echo ""
     echo "Usage: $0 <command> [options]"
     echo ""
@@ -43,7 +43,7 @@ start_feature() {
     echo -e "${YELLOW}Starting new feature: $feature_name${NC}"
     
     # Ensure we're on develop
-    git checkout develop 2>/dev/null || git checkout -b develop
+    git checkout develop
     git pull origin develop 2>/dev/null || echo "No remote origin set yet"
     
     # Create feature branch
@@ -84,7 +84,7 @@ sync_with_develop() {
     echo -e "${YELLOW}Syncing with develop branch${NC}"
     
     # Switch to develop and pull latest
-    git checkout develop 2>/dev/null || git checkout -b develop
+    git checkout develop
     git pull origin develop 2>/dev/null || echo "No remote origin set yet"
     
     echo -e "${GREEN}✓ Synced with develop${NC}"
@@ -95,8 +95,8 @@ cleanup_merged_branches() {
     echo -e "${YELLOW}Cleaning up merged feature branches...${NC}"
     
     # Switch to develop and pull latest
-    git checkout develop 2>/dev/null || git checkout -b develop
-    git pull origin develop 2>/dev/null || echo "No remote origin set yet"
+    git checkout develop
+    git pull origin develop
     
     # Find and delete merged feature branches
     MERGED_BRANCHES=$(git branch --merged | grep -E '^[[:space:]]*feature/' | sed 's/^[[:space:]]*//')
@@ -115,7 +115,7 @@ cleanup_merged_branches() {
     # Delete remote branches
     echo "$MERGED_BRANCHES" | while read branch; do
         if git show-ref --verify --quiet "refs/remotes/origin/$branch"; then
-            git push origin --delete "$branch" 2>/dev/null || true
+            git push origin --delete "$branch"
             echo -e "${GREEN}✓ Deleted remote branch: $branch${NC}"
         fi
     done
@@ -129,7 +129,7 @@ show_status() {
     echo ""
     echo -e "${BLUE}Current Branch:${NC} $(git branch --show-current)"
     echo -e "${BLUE}Recent Commits:${NC}"
-    git log --oneline -5 2>/dev/null || echo "No commits yet"
+    git log --oneline -5
 }
 
 # Main script logic
@@ -159,4 +159,3 @@ case "$1" in
         exit 1
         ;;
 esac
-
