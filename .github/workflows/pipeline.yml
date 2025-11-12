@@ -445,7 +445,6 @@ jobs:
           vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
           vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
           working-directory: apps/waitlist
-          scope: ${{ secrets.VERCEL_ORG_ID }}
 
       - name: Comment PR with dev URL (if PR)
         if: github.event_name == 'pull_request'
