@@ -120,13 +120,12 @@ O arquivo `apps/waitlist/vercel.json` já está configurado para monorepo:
   "version": 2,
   "buildCommand": "cd ../.. && pnpm --filter waitlist build",
   "installCommand": "cd ../.. && pnpm install",
-  "outputDirectory": "dist",
-  "rootDirectory": "apps/waitlist"
+  "outputDirectory": "dist"
 }
 ```
 
-**Importante**: No Vercel Dashboard, você ainda precisa configurar:
-- **Root Directory**: `apps/waitlist`
+**Importante**: No Vercel Dashboard, você **DEVE** configurar:
+- **Root Directory**: `apps/waitlist` (esta propriedade não pode estar no vercel.json)
 
 ### Opção 3: Usar vercel.json na Raiz (Alternativa)
 
